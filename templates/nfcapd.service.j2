@@ -1,0 +1,17 @@
+{{ ansible_managed | comment }}
+
+[Unit]
+Description=netflow capture daemon
+After=network-online.target auditd.service
+
+[Service]
+Type=simple
+EnvironmentFile=-/etc/default/nfcapd
+ExecStart=/usr/bin/nfcapd -P /run/nfcapd.pid $ARGS
+PIDFile=/run/nfcapd.pid
+SyslogIdentifier=nfcapd
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,17 @@
+{{ ansible_managed | comment }}
+
+[Unit]
+Description=sflow capture daemon
+After=network-online.target auditd.service
+
+[Service]
+Type=simple
+EnvironmentFile=-/etc/default/sfcapd
+ExecStart=/usr/bin/sfcapd -P /run/sfcapd.pid $ARGS
+PIDFile=/run/sfcapd.pid
+SyslogIdentifier=sfcapd
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target

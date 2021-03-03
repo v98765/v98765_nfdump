@@ -1,0 +1,49 @@
+---
+- name: create data directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+  loop:
+    - "{{ nfdump_nfcapd_dir }}"
+    - "{{ nfdump_sfcapd_dir }}"
+
+- name: create nfcapd env file
+  template:
+    src: nfcapd.j2
+    dest: /etc/default/nfcapd
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - restart nfcapd
+
+- name: create sfcapd env file
+  template:
+    src: sfcapd.j2
+    dest: /etc/default/sfcapd
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - restart sfcapd
+
+- name: create nfcapd systemd service unit
+  template:
+    src: nfcapd.service.j2
+    dest: /lib/systemd/system/nfcapd.service
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - restart nfcapd
+
+- name: create sfcapd systemd service unit
+  template:
+    src: sfcapd.service.j2
+    dest: /lib/systemd/system/sfcapd.service
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - restart sfcapd

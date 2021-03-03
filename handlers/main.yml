@@ -1,0 +1,15 @@
+---
+# handlers file for v98765_nfdump
+- name: restart sfcapd
+  become: true
+  systemd:
+    daemon_reload: true
+    name: sfcapd
+    state: restarted
+
+- name: restart nfcapd
+  become: true
+  systemd:
+    daemon_reload: true
+    name: nfcapd
+    state: restarted

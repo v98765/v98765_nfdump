@@ -1,0 +1,43 @@
+---
+# tasks file for v98765_nfdump
+- include: install.yml
+  become: true
+  tags:
+    - nfdump_install
+
+- name: ensure nfdump service is stopped and disabled
+  become: true
+  systemd:
+    daemon_reload: true
+    name: nfdump
+    state: stopped
+    enabled: false
+
+- include: configure.yml
+  become: true
+  tags:
+    - nfdump_configure
+
+- name: Pause for 10 seconds
+  pause:
+    seconds: 10
+
+- name: ensure nfcapd service is started and enabled
+  become: true
+  systemd:
+    daemon_reload: true
+    name: nfcapd
+    state: started
+    enabled: true
+  tags:
+    - nfdump_run
+
+- name: ensure sfcapd service is started and enabled
+  become: true
+  systemd:
+    daemon_reload: true
+    name: sfcapd
+    state: started
+    enabled: true
+  tags:
+    - nfdump_run

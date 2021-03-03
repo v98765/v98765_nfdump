@@ -1,0 +1,20 @@
+---
+- name: Assert usage debian
+  assert:
+    that: ansible_os_family == "Debian"
+    msg: "This module only works with apt"
+
+- name: Only run "update_cache=yes" if the last one is more than 3600 seconds ago
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+  async: 3600
+  poll: 30
+
+- name: apt nfdump
+  apt:
+    name: nfdump
+
+- name: apt nfdump-sflow
+  apt:
+    name: nfdump-sflow
