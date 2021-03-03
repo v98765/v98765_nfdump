@@ -14,9 +14,9 @@ Role Variables
 Name | Default Value | Description
 ---|---|---
 `nfdump_nfcapd_dir` |  "/var/cache/nflow" | dir for netflow files
-`nfdump_nfcapd_flags` | S: 1, T: all, w: 15, p: 9999, l: "{{ nfdump_nfcapd_dir }}" | non standard port 9999
+`nfdump_nfcapd_flags` | S: 1, T: all, t: 15, p: 9999, l: "{{ nfdump_nfcapd_dir }}" | non standard port 9999
 `nfdump_sfcapd_dir` | "/var/cache/sflow" | dir for sflow files
-`nfdump_sfcapd_flags` | S: 1, T: all, w: 15, p: 6343, l: "{{ nfdump_sfcapd_dir }}" | standard port 6343
+`nfdump_sfcapd_flags` | S: 1, T: all, t: 15, p: 6343, l: "{{ nfdump_sfcapd_dir }}" | standard port 6343
 
 Example Playbook
 ----------------

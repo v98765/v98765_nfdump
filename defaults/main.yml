@@ -4,7 +4,7 @@ nfdump_nfcapd_dir: "/var/cache/nflow"
 nfdump_nfcapd_flags:
   S: 1
   T: all
-  w: 15
+  t: 900
   p: 9999
   l: "{{ nfdump_nfcapd_dir }}"
 
@@ -12,6 +12,6 @@ nfdump_sfcapd_dir: "/var/cache/sflow"
 nfdump_sfcapd_flags:
   S: 1
   T: all
-  w: 15
+  t: 900
   p: 6343
   l: "{{ nfdump_sfcapd_dir }}"
