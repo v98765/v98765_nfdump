@@ -22,3 +22,35 @@
 - name: apt sipcalc
   apt:
     name: sipcalc
+
+- name: copy aggregation cron script
+  copy:
+    src: nflow-agg.cron
+    dest: /etc/cron.daily/nflow-agg
+    owner: root
+    group: root
+    mode: 0755
+
+- name: copy metrics cron script
+  copy:
+    src: nfdumpmetrics.cron
+    dest: /etc/cron.d/nfdumpmetrics
+    owner: root
+    group: root
+    mode: 0755
+
+- name: copy metrics script
+  copy:
+    src: nfdumpmetrics.sh
+    dest: /usr/local/sbin/nfdumpmetrics.sh
+    owner: root
+    group: root
+    mode: 0755
+
+- name: copy report script
+  copy:
+    src: nfgenreport.sh
+    dest: /usr/local/sbin/nfgenreport.sh
+    owner: root
+    group: root
+    mode: 0755
