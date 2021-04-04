@@ -8,6 +8,17 @@
     - "{{ nfdump_nfcapd_dir }}"
     - "{{ nfdump_sfcapd_dir }}"
 
+- name: create data,metrics directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: node-exp
+    group: node-exp
+    mode: 0755
+  loop:
+    - "{{ nfdump_nfcapd_dir }}/metrics"
+    - "{{ nfdump_sfcapd_dir }}/metrics"
+
 - name: create nfcapd env file
   template:
     src: nfcapd.j2
@@ -47,3 +58,11 @@
     mode: 0644
   notify:
     - restart sfcapd
+
+- name: create my networks_list
+  template:
+    src: networks_list.j2
+    dest: /etc/networks_list
+    owner: root
+    group: root
+    mode: 0644
