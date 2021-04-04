@@ -1,3 +1,4 @@
 {{ ansible_managed | comment }}
 
 ARGS="-w {% for flag, flag_value in nfdump_nfcapd_flags.items() %}-{{ flag }}{% if flag_value %} {{ flag_value }}{% endif %} {% endfor %}"
+NFLOW_DIR="{{ nfdump_nfcapd_dir }}"
