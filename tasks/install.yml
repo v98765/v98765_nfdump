@@ -18,3 +18,7 @@
 - name: apt nfdump-sflow
   apt:
     name: nfdump-sflow
+
+- name: apt sipcalc
+  apt:
+    name: sipcalc
