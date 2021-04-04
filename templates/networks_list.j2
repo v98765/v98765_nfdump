@@ -1,0 +1,3 @@
+{% for item in nfdump_networks_list %}
+{{ item | ansible.netcommon.ipaddr('net') }}
+{% endfor%}
