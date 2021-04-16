@@ -18,6 +18,7 @@ nets_prefix=$(cat /etc/networks_list | sed 's~$~ ~' | tr -d '\r\n')
 excl_prefix='10.0.0.0/8 192.168.0.0/16 172.16.0.0/12'
 timewin1=$(date -d "-1 minutes" +%Y/%m/%d.%H:%M)
 timewin2=$(date +%Y/%m/%d.%H:%M)
+scanports='22 2222 445 135 3389 1433'
 
 
 # check if nfcapd.current exists
@@ -69,6 +70,11 @@ nfdump -r metrics/nfdump.1m -N -q -A dstip,proto \
 "not src ip in [ $excl_prefix ] and  dst ip in [ $nets_prefix ]" \
  -o "fmt:%da %pr %pkt" > metrics/proto_pkt.nf
 
+# src data for nf_scan_flows
+nfdump -r metrics/nfdump.1m -N -q -A srcip \
+"dst port in [ $scanports ] and  src ip in [ $nets_prefix ]" \
+ -o "fmt:%sa %fl" > metrics/scan_flows.nf
+
 # total stats
 nfdump -r metrics/nfdump.1m -I |  tr '[:upper:]' '[:lower:]' | tr -d ':' | egrep 'flows|packets|bytes' | sed 's~^~nf_total_~' > metrics/nf_total.prom
 
@@ -76,6 +82,7 @@ nfdump -r metrics/nfdump.1m -I |  tr '[:upper:]' '[:lower:]' | tr -d ':' | egrep
 
 declare -A nf_proto_uniq
 declare -A nf_proto_pkt
+declare -A nf_scan_flows
 
 IFS=' '
 for ntwrk in $nets_list ; do
@@ -87,6 +94,7 @@ for ntwrk in $nets_list ; do
     nf_proto_pkt["$ip,1"]='0'
     nf_proto_pkt["$ip,6"]='0'
     nf_proto_pkt["$ip,11"]='0'
+    nf_scan_flows["$ip"]='0'
   done
 done
 
@@ -109,6 +117,19 @@ while read line ; do
     nf_proto_pkt["$myline_ip,$myline_proto"]=$myline_pkt
     unset myline
 done < metrics/proto_pkt.nf
+
+while read line ; do
+    declare -a myline
+    myline=($line)
+    myline_ip=${myline[0]}
+    myline_flows=${myline[1]}
+    nf_scan_flows["$myline_ip"]=$myline_flows
+    unset myline
+done < metrics/scan_flows.nf
+
+for key in ${!nf_scan_flows[@]}; do
+    echo "nf_scan_flows{ip=\"${key}\"} ${nf_scan_flows[$key]}"
+done > metrics/nf_scan_flows.prom
 
 for key in ${!nf_proto_uniq[@]}; do
     IFS=','
