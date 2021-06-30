@@ -1,4 +1,3 @@
 ---
 roles:
-  - name: https://github.com/v98765/v98765_exporter_node
-    version: main
+  - src: https://github.com/v98765/v98765_exporter_node

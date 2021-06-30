@@ -2,9 +2,9 @@
 - name: Converge
   hosts: all
   tasks:
-    - name: "install node exporter"
+    - name: "Include v98765_exporter_node"
       include_role:
-        name: "cloudalchemy.node_exporter"
+        name: "v98765_exporter_node"
     - name: "Include v98765_nfdump"
       include_role:
         name: "v98765_nfdump"
