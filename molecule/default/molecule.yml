@@ -1,11 +1,16 @@
 ---
 dependency:
   name: galaxy
+  options:
+    ignore-certs: True
+    ignore-errors: True
+    role-file: requirements.yml
 driver:
-  name: podman
+  name: docker
 platforms:
-  - name: ubuntu
-    image: geerlingguy/docker-ubuntu2004-ansible
+  - name: instance_nfdump
+    privileged: true
+    image: staticdev/docker-ubuntu2010-ansible:latest
     tmpfs:
       - /run
       - /tmp
