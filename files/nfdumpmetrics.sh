@@ -76,11 +76,22 @@ nfdump -r metrics/nfdump.1m -N -q -A srcip,dstip \
 # total stats
 nfdump -r metrics/nfdump.1m -I |  tr '[:upper:]' '[:lower:]' | tr -d ':' | egrep 'flows|packets|bytes' | sed 's~^~nf_total_~' > metrics/nf_total.prom
 
+# stats per /24
+nfdump -r metrics/nfdump.1m -N -q -A srcip4/24 \
+"not src ip in [ $excl_prefix ] and  src ip in [ $nets_prefix ]" \
+ -o "fmt:%sa %bps" > metrics/nf_srcbps24.nf
+
+nfdump -r metrics/nfdump.1m -N -q -A dstip4/24 \
+"not src ip in [ $excl_prefix ] and  dst ip in [ $nets_prefix ]" \
+ -o "fmt:%da %bps" > metrics/nf_dstbps24.nf
+
 # zero to all ips
 
 declare -A nf_proto_uniq
 declare -A nf_proto_pkt
 declare -A nf_scan_uniq
+declare -A nf_srcbps24
+declare -A nf_dstbps24
 
 IFS=' '
 for ntwrk in $nets_list ; do
@@ -125,9 +136,35 @@ while read line ; do
     unset myline
 done < metrics/scan_uniq.nf
 
+while read line ; do
+    declare -a myline
+    myline=($line)
+    myline_net=${myline[0]}
+    myline_bps=${myline[1]}
+    nf_srcbps24["$myline_net"]=$myline_bps
+    unset myline
+done < metrics/nf_srcbps24.nf
+
+while read line ; do
+    declare -a myline
+    myline=($line)
+    myline_net=${myline[0]}
+    myline_bps=${myline[1]}
+    nf_dstbps24["$myline_net"]=$myline_bps
+    unset myline
+done < metrics/nf_dstbps24.nf
+
 for key in ${!nf_scan_uniq[@]}; do
     echo "nf_scan_uniq{ip=\"${key}\"} ${nf_scan_uniq[$key]}"
 done > metrics/nf_scan_uniq.prom
+
+for key in ${!nf_srcbps24[@]}; do
+    echo "nf_srcbps24{net=\"${key}\"} ${nf_srcbps24[$key]}"
+done > metrics/nf_srcbps24.prom
+
+for key in ${!nf_dstbps24[@]}; do
+    echo "nf_dstbps24{net=\"${key}\"} ${nf_dstbps24[$key]}"
+done > metrics/nf_dstbps24.prom
 
 for key in ${!nf_proto_uniq[@]}; do
     IFS=','
